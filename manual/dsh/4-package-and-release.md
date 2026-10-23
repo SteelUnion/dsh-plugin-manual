@@ -125,3 +125,32 @@ $ua = '<workspace>\upload_asset.mjs'
 看三样：`tag_name` 对不对、`name` 对不对、`browser_download_url` 和 `size` 有没有。
 
 **别跳过这一步** —— Release 建成功但附件没传上去，界面看起来是正常的。
+
+---
+
+## 4.2 发 npm 时，包名要和清单里的 name 对齐
+
+`cordis.patch.yml` 里的 `name:` 是**模块名**，不是显示名：
+
+```yaml
+- insert:
+    - id: confirm-gate
+      name: '@sroada/dsh-confirm-gate'   # 这一行必须等于 package.json 的 name
+```
+
+改成无 scope 的包名时，只改 `package.json` 不够。要一起改的地方至少四处：
+
+1. `package.json` 的 `name`
+2. `cordis.patch.yml` 的 `name`
+3. `README.md` 里所有配置示例
+4. `README.zh-CN.md` 里同样那些示例
+
+**只改第一处会怎样**：安装「成功」，插件也出现在列表里，但插入的那一行指向一个不存在的模块，
+于是它什么也不做 —— 症状和不装一模一样。这正是第 1 册讲的第一种「没反应」，只不过这次是自己造成的。
+
+检查办法：打完包在 tarball 里 grep 旧名，应该 0 命中。
+
+### 改名之后，README 的安装命令也要跟着看
+
+如果 README 教的是 `dsh plugin add file:<dir>`，那 npm 改名不影响它。
+如果教的是 `dsh plugin add <包名>`，改名就等于让那条命令失效。改之前先确认 README 走哪条。

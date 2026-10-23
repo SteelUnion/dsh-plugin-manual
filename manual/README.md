@@ -12,7 +12,7 @@
 | 册 | 内容 | 字符 |
 |---|---|---|
 | [1 · 工具与运行时](common/1-tools-and-runtimes.md) | 把命令在这台机器上跑对：PowerShell 7 与 5.1 的差异、文件工具、Python 与 Node 解释器 | 5,067 |
-| [2 · 仓库与发布](common/2-github-and-release.md) | 往 GitHub 推东西：API 与 git 两条路怎么分、出错时哪些动作是白费、实测基线与超时处置 | 4,666 |
+| [2 · 仓库与发布](common/2-github-and-release.md) | 往 GitHub 推东西：API 与 git 两条路怎么分、实测基线、以及怎么发到 npm | 5,974 |
 | [3 · 网络分诊](common/3-network-triage.md) | 连不上时按层查：代理层、TCP 层、传输层，现象和处置都不一样 | 2,425 |
 | [4 · 调试与自检](common/4-debugging.md) | 东西不工作时怎么定位：探针放哪、分层问什么、写之前先过一遍什么 | 1,528 |
 
@@ -28,8 +28,8 @@
 |---|---|---|
 | [DSH 1 · 插件生命周期](dsh/1-plugin-lifecycle.md) | 装上没效果的三种情形、钩子返回结构、为什么停在半路而没有终态 | 2,259 |
 | [DSH 2 · 版本范围与请求编码](dsh/2-version-and-encoding.md) | `engines.dsh` 怎么填才不被预发布坑；请求字节在哪一层被改掉 | 1,104 |
-| [DSH 3 · 插件读服务：注入门](dsh/3-service-inject.md) | 不能直接 `ctx.shell`，也不能 `ctx.get()`；要么声明 `inject`，要么拿不到 | 822 |
-| [DSH 4 · 插件打包与发版](dsh/4-package-and-release.md) | 从改代码到 Release 附件，六步，以 `dsh-confirm-gate` 为例 | 2,539 |
+| [DSH 3 · 插件读服务：注入门](dsh/3-service-inject.md) | 不能直接 `ctx.shell`，也不能 `ctx.get()`；要么声明 `inject`，要么拿不到 | 818 |
+| [DSH 4 · 插件打包与发版](dsh/4-package-and-release.md) | 从改代码到 Release 附件六步，以及发 npm 时包名要和清单对齐 | 3,189 |
 
 另有 [dsh/README.md](dsh/README.md)，是这一组的内部索引。
 
@@ -46,7 +46,7 @@
 
 ## 四、给 agent 的说明
 
-八册互相独立，可以只取一册。单册 822 到 5,067 字符，原稿是一份 19,437 字符的单文件——
+八册互相独立，可以只取一册。单册 818 到 5,974 字符，原稿是一份 19,437 字符的单文件——
 分册的目的就是别让一次问答把整份塞进上下文。
 
 跨册只靠本页的链接，各册内部没有指向其他册的相对链接，取一册不会缺依赖。

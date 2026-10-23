@@ -173,3 +173,66 @@ git push origin main:main
 | 查最新 Release | `node gh.mjs get /repos/o/r/releases/latest` |
 | 打包 | `node pack.mjs` |
 | 取消跟踪（保留本地） | `git rm --cached <file>` |
+
+---
+
+## 2.3 发到 npm
+
+Release 和 npm 是两条独立的发布通道，别混。Release 给人下载压缩包，npm 给 `npm i` 和
+`dsh plugin add` 用。**只有 npm 有公开的下载计数**，想量「有没有人真的在用」，这是唯一能拿到的数字。
+
+### 默认 registry 不能发
+
+本机 `.npmrc` 多半指向 `registry.npmmirror.com`（镜像）。镜像是只读的，`npm publish` 会失败。
+发布要显式指定官方源：
+
+```
+npm publish --registry=https://registry.npmjs.org/
+```
+
+### 先看清单，再发
+
+```
+npm pack --dry-run
+```
+
+输出里看三行：`Tarball Contents`（哪些文件进包）、`total files`、`package size`。
+决定内容的是 `package.json` 的 `files` 字段。`files` 和 `.npmignore` 同时存在时容易互相打架，
+只维护 `files`，别再写 `.npmignore`。
+
+一个只有 `lib/index.js` 的插件，正常量级是 6 个文件、30 kB 上下。冒出几百 kB 通常是
+`dist/` 或 `node_modules` 漏进去了。
+
+### 认证
+
+`npm publish` 需要 token。两种做法：
+
+- 交互登录一次：`npm login`，会写进 `~/.npmrc`，明文 token，别提交进仓库
+- 或者把 token 放进 CI 的 `NODE_AUTH_TOKEN` 环境变量
+
+**token 不进仓库、不打印、不贴进对话。** 漏一次要立刻去 npm 后台 revoke。
+
+### 有 scope 和没 scope 是两回事
+
+`@owner/name` 里的 `owner` 必须是你自己的用户名或你所属的组织。没有那个 scope 发不出去，
+而且报的是 `404 Not Found` 而不是权限错误，很容易误判成「名字被占了」。
+
+查名字有没有被占，别看网页，看 registry：
+
+```
+curl -s -o /dev/null -w "%{http_code}" https://registry.npmjs.org/<包名>
+```
+
+`404` 是没被占，`200` 是已存在。
+
+### 预发布版本要打 tag
+
+版本号带 `-rc.1` / `-alpha.2` 时，`npm publish` **默认仍然会把它推成 `latest`**，
+于是所有人装到的都是预览版。必须显式给 tag：
+
+```
+npm publish --tag next --registry=https://registry.npmjs.org/
+```
+
+正式版发出来之后 `latest` 才会回到正式版。发错了撤不回：72 小时内可以 `npm unpublish`，
+超过就只能改版本号重发。

@@ -179,7 +179,16 @@ git push origin main:main
 ## 2.3 发到 npm
 
 Release 和 npm 是两条独立的发布通道，别混。Release 给人下载压缩包，npm 给 `npm i` 和
-`dsh plugin add` 用。**只有 npm 有公开的下载计数**，想量「有没有人真的在用」，这是唯一能拿到的数字。
+`dsh plugin add` 用。
+
+两条通道各有一个**公开的**计数，别人装完不留痕，只有这两个数看得见：
+
+| 通道 | 计数在哪 | 特点 |
+|---|---|---|
+| Release | 附件的 `download_count`（API 里直接读得到） | 不需要任何账号，建了 release 就有 |
+| npm | `api.npmjs.org/downloads/point/last-week/<包名>` | 需要真发到 registry |
+
+2026-10 实测：`dsh-vault` 只有 12 个 star，npm 一周 575 次下载——星数不代表使用量。
 
 ### 默认 registry 不能发
 

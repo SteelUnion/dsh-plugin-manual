@@ -1,6 +1,11 @@
 # 第 4 册 · 调试与自检
 
-东西不工作时怎么定位：探针放哪、分层问什么、写之前先过一遍什么。
+> 适用面：**通用**。命令、脚本、网络、调试方法，换个项目也照用。
+> DSH 内核相关的内容不在这里，在 [`../dsh/`](../dsh/README.md)。
+
+> 东西不工作时怎么定位：探针放哪、分层问什么、写之前先过一遍什么。
+> 「插件读服务要先声明 `inject`」那一条只对 DSH 成立，已挪到
+> [`../dsh/3-service-inject.md`](../dsh/3-service-inject.md)。
 
 ---
 
@@ -32,37 +37,6 @@ probe(`MODULE LOADED pid=${process.pid} cwd=${process.cwd()} file=${import.meta.
 | 有这条，没 `apply()` | 加载了但没初始化 → 查返回值/依赖 |
 | 有 `apply()`，钩子没触发 | 钩子没挂上 → 查注册 |
 | 钩子触发但行为不对 | 逻辑问题 → 看钩子内探针 |
-
-### DSH 插件读服务：先声明 `inject`，再直接访问
-
-**两种写法都会抛注入门错误**，`ctx.get()` 也不能绕：
-
-```js
-ctx.shell            // ✗ cannot get property "shell" without inject
-ctx.get('shell')     // ✗ 同样抛
-```
-
-**正确做法：在插件里声明依赖。**
-
-```js
-export const inject = ['userQuestions'];   // 声明
-
-export function apply(ctx) {
-  ctx.userQuestions.ask(...);              // 声明后才能访问
-}
-```
-
-`inject` 同时是**能力边界**：声明什么，插件才有什么。
-中枢类插件只声明 `userQuestions`，不声明 `tools` / `shell`，就动不了手。
-
-**这个错误只在真机暴露** —— 离线 mock 的 ctx 没有注入门，怎么写都不报错。
-所以单测里要断言 `inject` 的内容：
-
-```js
-assert.ok(Array.isArray(mod.inject));
-assert.ok(mod.inject.includes('userQuestions'));
-assert.ok(!mod.inject.includes('tools'));   // 不该有的别声明
-```
 
 ### 失效方向：宁可多报警，不可静默
 
@@ -104,7 +78,3 @@ assert.ok(!mod.inject.includes('tools'));   // 不该有的别声明
 - [ ] 改文件用 `write`/`edit`，还是字符串替换？
 - [ ] 输出长度可控吗？→ 加 `Select-Object` / `-First`
 - [ ] 失败时能看到原因吗？→ `2>&1` + 显式输出
-
----
-
----

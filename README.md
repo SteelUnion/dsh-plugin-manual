@@ -10,9 +10,7 @@
 
 ---
 
-# 工具用法（正确写法合集）
-
-> 只记「怎么做对」。按工具分类，可查可抄。
+> 前七节是原有的工具速查，只记「怎么做对」，按工具分类，可查可抄。
 
 ---
 
@@ -437,21 +435,21 @@ git status --porcelain --ignored # 未跟踪 + 被忽略
 ```
 
 **提交前必须看清名单。** 检查三件事：
-1. 有没有**私人笔记**（面试速查、todo、草稿）
+1. 有没有**私人笔记**（草稿、todo、临时数据）
 2. 有没有**数据集 / 截图 / 录屏**
 3. 有没有**密钥、令牌、绝对路径**
 
 发现私货文件 → `git rm --cached <file>`（**只取消跟踪，本地文件保留**），再写进 `.gitignore`。
 
 ```powershell
-git rm --cached docs/interview-notes-zh.md
+git rm --cached docs/personal-notes-zh.md
 ```
 
 `.gitignore` 里加：
 
 ```gitignore
-# Personal notes — kept locally, never published
-docs/interview-notes-zh.md
+# Personal notes - kept locally, never published
+docs/personal-notes-zh.md
 ```
 
 **验证**：`git status --porcelain --ignored` 里该文件应该显示 `!!`（被忽略），而不是 `??`（未跟踪）。
